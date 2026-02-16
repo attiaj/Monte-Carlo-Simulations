@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-N = np.arange(0,1000,1)
+N = np.arange(0,10000,1)
 
 xn = []
 for n in N:
