@@ -5,17 +5,17 @@ np.random.seed(15)
 N = 1000       # samples per replication
 reps = 10**4  # number of independent means
 
-# True mean for Uniform[0,1]
+# We know true mean for Uniform[0,1]
 true_mean = 0.5
 
 # Generate all data: shape (reps, N)
 Z = np.random.uniform(0, 1, size=(reps, N))
 
-# Compute sample means and sample std because for CLT you use sample not population
-# ddof controls how denominator is calculated
-# Z bar is an array of all replications
+# Now compute sample means and sample std because for CLT you use sample not population
 Z_bar = np.mean(Z, axis=1)
 sN = np.std(Z, axis=1, ddof=1)
+# ddof controls how denominator is calculated
+## Z bar is an array of all replications
 
 # Compute 95% confidence interval
 lower = Z_bar - 1.96 * sN / np.sqrt(N)
@@ -50,3 +50,6 @@ inside_exp = (lower_exp <= true_mean_exp) & (true_mean_exp <= upper_exp)
 # Fraction of CIs containing true mean
 fraction_inside_exp = np.mean(inside_exp)
 print("Exponential(1): Fraction of 95% CIs containing true mean =", fraction_inside_exp)
+
+# We can see from running this code that the estimates of the required probability are quite
+# close to the theoretical value of .95 being .9497 and .9503 respectively 
