@@ -41,7 +41,7 @@ print("Estimated E[N] =", E_N)
 ## Now we need to do part 2
 
 ## We can see that the number of n is related to the Poisson Process
-## Specifically, the waiting time until the sum exceeds the threshold follows an exponential distribution
+## Specifically, the increments are exponential
 ## This is a key property of the Poisson process, where events occur continuously and independently at a constant average rate
 
 ## Therefore, this is a lambda=5 poisson probability
@@ -72,3 +72,5 @@ for k in range(k_max+1):
 
 ## In conclusion we found how likely each number is below the threshold of 5
 ## We can see that this virtually matches the Poisson distribution with λ=5
+## The estimated value therefore is about 5 which confirms that N follows approximately
+## a Poisson distribution with λ=5
