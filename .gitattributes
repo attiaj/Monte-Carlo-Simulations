@@ -1,0 +1,6 @@
+# Handle Jupyter notebooks - prevent line ending issues
+*.ipynb text eol=lf
+
+# Ensure JSON files use consistent line endings
+*.json text eol=lf
+
