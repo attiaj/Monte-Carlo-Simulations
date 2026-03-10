@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Constants
 alpha = 3
 sigma = 0.25
 rbar = 0.05
@@ -13,6 +14,7 @@ T = 1
 
 t = np.linspace(0,T,N)
 
+# Expected value of a random variable
 def expectation(sims: int, expectee, N):
     trials = []
     i = 0
@@ -22,11 +24,13 @@ def expectation(sims: int, expectee, N):
     
     return np.average(trials,axis=0)
 
+# Browniam motion seed
 def Bt(N: int):
     Z = np.random.normal(0,1,N)
     dt = np.ones(N) * T/N
     return np.cumsum(Z*np.sqrt(dt))
 
+# rt exact simulation
 def rt(N: int, B: list):
     integral = []
     j = 0
@@ -40,6 +44,7 @@ def rt(N: int, B: list):
         j += 1
     return rnaught*np.exp(-alpha*t)+rbar*(1-np.exp(-alpha*t))+np.multiply(sigma,integral)
 
+# rtN Euler-Maruyama
 def rtNEM(N: int, B: list):
     rtN = [rnaught]
     i = 1
@@ -48,6 +53,7 @@ def rtNEM(N: int, B: list):
         i += 1
     return rtN
 
+# rtN Milstein
 def rtNM(N: int, B: list):
     rtN = [rnaught]
     i = 1
@@ -56,21 +62,27 @@ def rtNM(N: int, B: list):
         i += 1
     return rtN
 
+# Absolute difference of rtNEM and rt
 def absrtNEMminusrt(N: int, B: list):
     return np.abs(np.subtract(rtNEM(N,B),rt(N,B)))
 
+# Max_t of absolute difference of rtNEM and rt
 def maxAbsrtNEMminusrt(N: int, B: list):
     return max(np.abs(np.subtract(rtNEM(N,B),rt(N,B))))
 
+# Absolute difference of rtNM and rt
 def absrtNMminusrt(N: int, B: list):
     return np.abs(np.subtract(rtNM(N,B),rt(N,B)))
 
+# Max_t of absolute difference of rtNM and rt
 def maxAbsrtNMminusrt(N: int, B: list):
     return max(np.abs(np.subtract(rtNM(N,B),rt(N,B))))
 
+# St exact simulation
 def St(N: int, B: list): # St is geometric Brownian motion
     return snaught*np.exp((mu-sigma**2/2)*t+sigma*B)
 
+# StN Euler-Maruyama
 def StNEM(N: int, B: list):
     StN = [snaught]
     i = 1
@@ -79,6 +91,7 @@ def StNEM(N: int, B: list):
         i += 1
     return StN
 
+# StN Milstein
 def StNM(N: int, B: list):
     StN = [snaught]
     i = 1
@@ -87,20 +100,25 @@ def StNM(N: int, B: list):
         i += 1
     return StN
 
+# Absolute difference of StNEM and St
 def absStNEMminusSt(N: int, B: list):
     return np.abs(np.subtract(StNEM(N,B),St(N,B)))
 
+# Max_t of absolute difference of StNEM and St
 def maxAbsStNEMminusSt(N: int, B: list):
     return max(np.abs(np.subtract(StNEM(N,B),St(N,B))))
 
+# Absolute difference of StNM and St
 def absStNMminusSt(N: int, B: list):
     return np.abs(np.subtract(StNM(N,B),St(N,B)))
 
+# Max_t of absolute difference of StNM and St
 def maxAbsStNMminusSt(N: int, B: list):
     return max(np.abs(np.subtract(StNM(N,B),St(N,B))))
 
 B = Bt(N)
 
+# Run simulations from functions defined above
 sims = 100
 Ert = []
 ErtNEM = []
@@ -146,6 +164,7 @@ while i < len(Ns):
     EMaxAbsStNM.append(expectation(sims,maxAbsStNMminusSt,Ns[i]))
     i += 1
 
+# Create plots
 plt.plot(Ns,MaxAbsEStNEM,label="MaxAbsEStNEM")
 plt.plot(Ns,MaxEAbsStNEM,label="MaxEAbsStNEM")
 plt.plot(Ns,EMaxAbsStNEM,label="EMaxAbsStNEM")
