@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Homework Explanations</title>
+    <style>
+        @media print {
+            @page {
+                margin: 1in;
+            }
+            body {
+                margin: 0;
+            }
+        }
+        body {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        p {
+            margin: 1em 0;
+            text-align: justify;
+        }
+        /* MathJax styling */
+        .MathJax, .math {
+            font-size: 1.1em;
+        }
+        /* Table styling */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1em 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']]
+            }
+        };
+    </script>
+</head>
+<body>
+<p>Question 1:</p>
+<p>For part 1, we generated x uniformly between the bounds of the integral, 0 and 1, because we are integrating with respect to the Lebesgue measure, which is the probability distribution of a uniform random variable. We then transformed these generated x into the integrand $(1-x^2)^{3/2}$. By the mean value theorem, the average of these generated integrands multiplied by the length of the integral bounds (1-0=1) gives us an approximation of the integral&#x27;s value.</p>
+<p><br>
+For part 2, there does not exist a uniform random variable on $(0,\infty)$ (at least with respect to the Lebesgue measure!), so we need a different solution. Noticing that<br>
+$$\int_0^\infty\int_0^xe^{-(x+y)}dydx=\int_0^\infty e^{-x}\int_0^xe^{-y}dydx=\mathbb{E}_g(\int_0^xe^{-y}dy)\approx_{LLN}\frac{1}{N}\sum_{i=1}^N\int_0^{x_i}e^{-y}dy$$<br>
+where $x_i$ have PDF $g(x)=e^{-x}$ for $x\ge0$, we can generate $e^{-x}$ uniformly (thanks again to the Lebesgue measure) and back out our exponentially distributed $x_i$ to use in calculating $\int_0^{x_i}e^{-y}dy$ as in step 1, which is then used with the law of large numbers to approximate the original integral.</p>
+<p>Question 2: </p>
+<p>For part 1 we were asked to test the Central Limit Theorem for a sample mean and sample standard deviation, constructing sample confidence intervals, and determining the probability that our sampled values lie within the interval. By using a Monte Carlo simulation with 10^4 repetitions we found this probability to be .9497 which is approximately equal to our expected probability of 0.95 from the CLT. </p>
+<p>For part 2, we did the same thing but for an exponential distribution with $\lambda$ = 1. The estimated probability for this was .9503 which is still very close to the theoretical value of .95. By doing these two simulations, we can confirm the accuracy of the CLT for large samples such as 10^4.</p>
+<p>Question 3:</p>
+<p>For part 1, we need to find the best constant c($\lambda$) for the AR method. Taking Exp($\lambda$) as our g(x) function, we calculate $\frac{f(x)}{g(x)}$, then take the derivative to find the maximum value that this function can take. The derivative = 0 when x = 0 (minimum possible value of x) or when x* = $\frac{2}{1-\lambda}$, which is our maximum value. Therefore, $\frac{f(x)}{g(x)}$ must be less than or equal to its evaluation at x*, and we get c($\lambda$) = $\frac{f(x*)}{g(x*)}$ = $\frac{2e^{-2}}{\lambda(1-\lambda)^2}$</p>
+<p>For part 2, we want to make the AR method the most efficient as we can: a uniform RV gets accepted if it&#x27;s less than $\frac{f(X)}{cg(X)}$. The probability of acceptance is the expected value of this formula, which comes out to be $\frac{1}{c}$. Therefore, if we want our probability of acceptance to be the highest possible value, we need to minimize c, to maximize the acceptance rate. If we take the derivative of our c($\lambda$) function, set it equal to 0, we get $\lambda$* = 1/3. From a boundary check, we verify that this is a minimum, and thus our optimal $\lambda$*</p>
+<p>For part 3, we first defined c with our optimal $\lambda$*, f(x), and g(x), then calculated the true Expected Value of f(x) to be $\int_0^\infty x \cdot \frac{1}{2}x^2 e^{-x} dx$ = 3. Using this true mean, we can compare our sample means for differing numbers of samples to see when we start to experience diminishing returns.</p>
+<p>The algorithm runs a for loop for each value of n = 10^1, 10^2, ... 10^7. In each case we use AR method, taking only accepted samples into a list, then computing our sample mean. </p>
+<p>We seem to begin experiencing diminishing returns around n = 10^5, where our sample mean is 3.0077, and n = 10^6&#x27;s sample mean is 2.9985. We start to gain only small amounts of accuracy in a tradeoff for exceptionally long computation times, with n = 10^7 producing sample mean of 3.0003 in return for about 3 full minutes of computation.</p>
+<p>Question 4:</p>
+<p>In part 1, we were asked to find the expected value of the given N by a simulation. By taking the natural log of each side, we are able to simplify the problem to $\sum_{i=1}^n X_i \leq 5$ where $X_i = -ln(U_i)$ ~ $Exp(1)$. From this we derive that $N$ ~ $Poi(5)$ and thus E[N] = 5. We then simulate exponential RVs with $\lambda = 1$, recording how many progressive simulated values can sum before breaking the barrier of 5. Then we take the EV of our (10^4) recordings. We found the expected value of N to be 4.9924, which is almost exactly equal to the true mean of 5. </p>
+<p>In part 2 of the question, we simply run the same simulation, seeing what proportion of our recorded values for N happen to be 1, 2, ... 20. Our results are shown below: </p>
+<p>k   |    Simulated   |    Poisson(λ=5)</p>
+<p>0       0.0065          0.0067</p>
+<p>1       0.0331          0.0337</p>
+<p>2       0.0844          0.0842</p>
+<p>3       0.1424          0.1404</p>
+<p>4       0.1763          0.1755</p>
+<p>5       0.1735          0.1755</p>
+<p>6       0.1478          0.1462</p>
+<p>7       0.1044          0.1044</p>
+<p>8       0.0648          0.0653</p>
+<p>9       0.0355          0.0363</p>
+<p>10      0.0178          0.0181</p>
+<p>11      0.0081          0.0082</p>
+<p>12      0.0032          0.0034</p>
+<p>13      0.0015          0.0013</p>
+<p>14      0.0004          0.0005</p>
+<p>15      0.0002          0.0002</p>
+<p>16      0.0000          0.0000</p>
+<p>17      0.0000          0.0000</p>
+<p>18      0.0000          0.0000</p>
+<p>19      0.0000          0.0000</p>
+<p>20      0.0000          0.0000</p>
+<p>In end, our best guess for $\lambda$ is indeed 5, since from our simulation, we get a sample mean of ~5, and the EV of a Poisson distribution is equal to $\lambda$</p>
+<p>Question 5:</p>
+<p>For each policy holder we uniformly generated a number between 0 and 1. If that number was less than 0.05, we uniformly generated another number between 0 and 1 which we transformed into an exponentially distributed number and added that amount to the total claim dollar amount for that simulation. After iterating over every policy holder, if the total claims exceeded $\$5000$, we added it to the count of 'successful' simulations. We did this $N=10^4$ many times because any higher order of magnitude took too long, and found the proportion of times the claims exceeded the threshold was $p=0.1051$.</p>
+<p>Question 6:</p>
+<p>In part 1, we want to simulate the log return between the inital stock price and the price at T = 1, for differing values of N, where N represents the number of steps (changes in price) over the year. We can use the binomial model to simulate the number of successes vs. failures in N steps, where successes represent upward moves, defined using the given u, and failures represent downward moves, defined with 1/u. From there we simply multiply the inital price by u for the amount of successes, and vice versa for d. We run 1,000,000 simulations, each using 10,000 steps, and calculate our sample mean and standard deviation. </p>
+<p>We run these 1,000,000 simulations 4 separate times, each with differing values of $\mu$ to check the dependence on $\mu$. Plotting histograms for each of the 4 cases, with a $N(r - \sigma^2/2, \sigma)$ distribution overlayed to check accuracy, we verify that for a high number of simulations, the log returns do indeed converge to that distribution. Furthermore, different values of $\mu$ do not change this convergence, so we can infer that there is no dependence on $\mu$. Our simulated EVs and SDs are below:</p>
+<p>μ = -0.2000:<br>
+  Estimated mean: -0.029071,<br>
+  Estimated std:  0.397910</p>
+<p>μ = 0.0000:<br>
+  Estimated mean: -0.030370,<br>
+  Estimated std:  0.400290</p>
+<p>μ = 0.2000:<br>
+  Estimated mean: -0.030101,<br>
+  Estimated std:  0.402073</p>
+<p>μ = -0.0300<br>
+  Estimated mean: -0.029231,<br>
+  Estimated std:  0.399911</p>
+<p>For part 2, we approximate the price of a European call using similar simulation, and compare it to the calculated Black-Scholes price for different values of M. We do this 4 times for each different value of $\mu$. We simulate the price after 1 year in the same way as part 1, using 10,000 steps, approximate the EV of the call using the sample mean, and see if the approximations converge to the Black-Scholes price as the number of simulations increases. </p>
+<p>We plot 4 graphs showing the Black-Scholes price as a red dashed line, and the approximations alongside it. We see that as n increases, the approximation approaches the Black-Scholes price, with error decreasing along the way. We see that price converges at almost exactly the same rate regardless of the value of $\mu$, confirming that neither the approximation nor the rate of convergence depend on $\mu$</p>
+</body>
+</html>
