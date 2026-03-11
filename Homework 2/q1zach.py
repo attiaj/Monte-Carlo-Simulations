@@ -8,18 +8,18 @@ rbar = 0.05
 rnaught = 0.05
 snaught = 100
 mu = 0.15
-Ns = [1,5,10,50,100,500,1000]
+Ns = [1,5,10,50,100,500]#,1000]
 N = max(Ns)
 T = 1
 
-t = np.linspace(0,T,N)
+#t = np.linspace(0,T,N)
 
 # Expected value of a random variable
-def expectation(sims: int, expectee, N):
+def expectation(sims: int, expectee, N, B):
     trials = []
     i = 0
     while i < sims:
-        trials.append(expectee(N,Bt(N)))
+        trials.append(expectee(N,B[i]))
         i += 1
     
     return np.average(trials,axis=0)
@@ -96,7 +96,7 @@ def StNM(N: int, B: list):
     StN = [snaught]
     i = 1
     while i < N:
-        StN.append(StN[i-1]+StN[i-1]*mu*T/N+sigma*(B[i]-B[i-1]))
+        StN.append(StN[i-1]+StN[i-1]*mu*T/N+sigma*StN[i-1]*(B[i]-B[i-1])+0.5*sigma**2*StN[i-1]*((B[i]-B[i-1])**2-T/N))
         i += 1
     return StN
 
@@ -116,10 +116,8 @@ def absStNMminusSt(N: int, B: list):
 def maxAbsStNMminusSt(N: int, B: list):
     return max(np.abs(np.subtract(StNM(N,B),St(N,B))))
 
-B = Bt(N)
-
 # Run simulations from functions defined above
-sims = 100
+sims = 10000
 Ert = []
 ErtNEM = []
 ErtNM = []
@@ -141,66 +139,75 @@ MaxEAbsStNM = []
 EMaxAbsStNM = []
 i = 0
 while i < len(Ns):
+    j = 0
+    B = []
+    while j < sims:
+        B.append(Bt(Ns[i]))
+        j += 1
     t = np.linspace(0,1,Ns[i])
-    Ert.append(expectation(sims,rt,Ns[i]))
-    ESt.append(expectation(sims,St,Ns[i]))
-    ErtNEM.append(expectation(sims,rtNEM,Ns[i]))
-    EStNEM.append(expectation(sims,StNEM,Ns[i]))
+
+    Ert.append(expectation(sims,rt,Ns[i],B))
+    ESt.append(expectation(sims,St,Ns[i],B))
+    ErtNEM.append(expectation(sims,rtNEM,Ns[i],B))
+    EStNEM.append(expectation(sims,StNEM,Ns[i],B))
     MaxAbsErtNEM.append(max(np.abs(np.subtract(Ert[i],ErtNEM[i]))))
     MaxAbsEStNEM.append(max(np.abs(np.subtract(ESt[i],EStNEM[i]))))
-    ErtNM.append(expectation(sims,rtNM,Ns[i]))
-    EStNM.append(expectation(sims,StNM,Ns[i]))
+    ErtNM.append(expectation(sims,rtNM,Ns[i],B))
+    EStNM.append(expectation(sims,StNM,Ns[i],B))
     MaxAbsErtNM.append(max(np.abs(np.subtract(Ert[i],ErtNM[i]))))
     MaxAbsEStNM.append(max(np.abs(np.subtract(ESt[i],EStNM[i]))))
 
-    MaxEAbsrtNEM.append(max(expectation(sims,absrtNEMminusrt,Ns[i])))
-    MaxEAbsStNEM.append(max(expectation(sims,absStNEMminusSt,Ns[i])))
-    MaxEAbsrtNM.append(max(expectation(sims,absrtNMminusrt,Ns[i])))
-    MaxEAbsStNM.append(max(expectation(sims,absStNMminusSt,Ns[i])))
+    MaxEAbsrtNEM.append(max(expectation(sims,absrtNEMminusrt,Ns[i],B)))
+    MaxEAbsStNEM.append(max(expectation(sims,absStNEMminusSt,Ns[i],B)))
+    MaxEAbsrtNM.append(max(expectation(sims,absrtNMminusrt,Ns[i],B)))
+    MaxEAbsStNM.append(max(expectation(sims,absStNMminusSt,Ns[i],B)))
 
-    EMaxAbsrtNEM.append(expectation(sims,maxAbsrtNEMminusrt,Ns[i]))
-    EMaxAbsStNEM.append(expectation(sims,maxAbsStNEMminusSt,Ns[i]))
-    EMaxAbsrtNM.append(expectation(sims,maxAbsrtNMminusrt,Ns[i]))
-    EMaxAbsStNM.append(expectation(sims,maxAbsStNMminusSt,Ns[i]))
+    EMaxAbsrtNEM.append(expectation(sims,maxAbsrtNEMminusrt,Ns[i],B))
+    EMaxAbsStNEM.append(expectation(sims,maxAbsStNEMminusSt,Ns[i],B))
+    EMaxAbsrtNM.append(expectation(sims,maxAbsrtNMminusrt,Ns[i],B))
+    EMaxAbsStNM.append(expectation(sims,maxAbsStNMminusSt,Ns[i],B))
     i += 1
 
 # Create plots
 plt.plot(Ns,MaxAbsEStNEM,label="MaxAbsEStNEM")
-plt.plot(Ns,MaxEAbsStNEM,label="MaxEAbsStNEM")
-plt.plot(Ns,EMaxAbsStNEM,label="EMaxAbsStNEM")
-
-plt.xscale('log')
-plt.yscale('log')
-plt.legend()
-plt.title("St Euler-Maruyama")
-plt.show()
-
 plt.plot(Ns,MaxAbsErtNEM,label="MaxAbsErtNEM")
-plt.plot(Ns,MaxEAbsrtNEM,label="MaxEAbsrtNEM")
-plt.plot(Ns,EMaxAbsrtNEM,label="EMaxAbsrtNEM")
-
-plt.xscale('log')
-plt.yscale('log')
-plt.legend()
-plt.title("rt Euler-Maruyama")
-plt.show()
-
 plt.plot(Ns,MaxAbsEStNM,label="MaxAbsEStNM")
-plt.plot(Ns,MaxEAbsStNM,label="MaxEAbsStNM")
-plt.plot(Ns,EMaxAbsStNM,label="EMaxAbsStNM")
+plt.plot(Ns,MaxAbsErtNM,label="MaxAbsErtNM")
+plt.plot(Ns,np.divide(1,Ns),ls='--',label="1/N")
+plt.plot(Ns,np.divide(1,np.sqrt(Ns)),ls='--',label="1/sqrt(N)")
 
 plt.xscale('log')
 plt.yscale('log')
 plt.legend()
-plt.title("St Milstein")
+plt.title("weak convergence")
 plt.show()
 
-plt.plot(Ns,MaxAbsErtNM,label="MaxAbsErtNM")
+
+
+plt.plot(Ns,MaxEAbsStNEM,label="MaxEAbsStNEM")
+plt.plot(Ns,MaxEAbsrtNEM,label="MaxEAbsrtNEM")
+plt.plot(Ns,MaxEAbsStNM,label="MaxEAbsStNM")
 plt.plot(Ns,MaxEAbsrtNM,label="MaxEAbsrtNM")
-plt.plot(Ns,EMaxAbsrtNM,label="EMaxAbsrtNM")
+plt.plot(Ns,np.divide(1,Ns),ls='--',label="1/N")
+plt.plot(Ns,np.divide(1,np.sqrt(Ns)),ls='--',label="1/sqrt(N)")
 
 plt.xscale('log')
 plt.yscale('log')
 plt.legend()
-plt.title("rt Milstein")
+plt.title("strong convergence")
+plt.show()
+
+
+
+plt.plot(Ns,EMaxAbsStNEM,label="EMaxAbsStNEM")
+plt.plot(Ns,EMaxAbsrtNEM,label="EMaxAbsrtNEM")
+plt.plot(Ns,EMaxAbsStNM,label="EMaxAbsStNM")
+plt.plot(Ns,EMaxAbsrtNM,label="EMaxAbsrtNM")
+plt.plot(Ns,np.divide(1,Ns),ls='--',label="1/N")
+plt.plot(Ns,np.divide(1,np.sqrt(Ns)),ls='--',label="1/sqrt(N)")
+
+plt.xscale('log')
+plt.yscale('log')
+plt.legend()
+plt.title("pathwise convergence")
 plt.show()
