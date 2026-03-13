@@ -1,14 +1,3 @@
-"""
-Variance Gamma Model - Monte Carlo Option Pricing
-Problem #5
-
-Model: S_t = S_0 * exp((r + w)*t + W_{gamma_t})
-where:
-  - W_t = mu*t + sigma*B_t  (Brownian motion with drift)
-  - gamma_t is a Gamma process with shape a = 1/nu, scale b = nu
-  - w = a * log(1 - mu*nu - sigma^2*nu/2)  (martingale correction)
-"""
-
 import numpy as np
 from scipy.stats import norm
 from scipy.optimize import brentq
@@ -247,36 +236,5 @@ def problem2():
 
     return price, std_err
 
-
-# ── Main ──────────────────────────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    problem1()
-    price, se = problem2()
-
-    print("\n" + "=" * 60)
-    print("DISCUSSION NOTES")
-    print("=" * 60)
-    print("""
-Problem 1 – Implied Volatility Smile:
-  • σ (diffusion vol): Primary driver of the overall IV level. Higher σ
-    raises the entire smile. When σ is small, the VG jump component
-    dominates and the smile is steep; when σ is large, the smile flattens.
-
-  • μ (drift of BM): Controls skewness. Negative μ tilts the distribution
-    left → higher IV for low strikes (put skew). Positive μ tilts right
-    → higher IV for high strikes. This is the main lever for controlling
-    the risk-neutral skew.
-
-  • ν (variance rate of Gamma clock): Controls kurtosis / curvature.
-    Larger ν means more "time-change" variance → fatter tails → more
-    pronounced smile (higher IV at wings relative to ATM). Small ν
-    produces a nearly flat smile, converging toward Black-Scholes.
-
-Problem 2 – Reset Strike Put:
-  The option benefits when S_{T1} < K (strike resets to K) but S_{T2}
-  is also low, or when S_{T1} > K and then S_{T2} falls below S_{T1}.
-  The VG model introduces jump-like behaviour and skewness that raises
-  the probability of large adverse moves, typically pricing this exotic
-  higher than a comparable GBM model.
-""")
+problem1()
+price, se = problem2()
