@@ -1,0 +1,8 @@
+Standard MC struggles severely for rare events like P[X > 10] ≈ 4.54e-5.
+Even with M = 10^6 samples, fewer than ~45 will exceed 10, giving a very noisy estimate with high relative standard error (~100% or more for small M).
+For M = 10^3 the estimate is often exactly 0 (no hits at all).
+
+Importance sampling with the proposal g ~ Exp(1/10) shifts significantly more samples into the region x > 10.
+Every draw contributes a non-zero weighted term, so the estimator converges far more quickly.
+
+The IS estimate is unbiased and its relative standard error shrinks predictably as O(1/√M), but starting from a much smaller base variance.
