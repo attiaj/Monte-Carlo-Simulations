@@ -403,11 +403,11 @@ def part_3b():
         PT_k       = lookback_payoff_from_logS(log_S)
         sigma_k[k] = np.std(PT_k, ddof=1)
  
-    # print(f"Pilot sigma_k estimates (N0={N0} per stratum):")
-    # for k in range(N_STRATA):
-    #     lo = f"{STRATA_BOUNDS[k]:.1f}" if not np.isinf(STRATA_BOUNDS[k]) else "-inf"
-    #     hi = f"{STRATA_BOUNDS[k+1]:.1f}" if not np.isinf(STRATA_BOUNDS[k+1]) else "+inf"
-    #     print(f"  Stratum {k+1} ({lo}, {hi}): p_k={P_K[k]:.4f}  sigma_k={sigma_k[k]:.4f}")
+    print(f"Pilot sigma_k estimates (N0={N0} per stratum):")
+    for k in range(N_STRATA):
+        lo = f"{STRATA_BOUNDS[k]:.1f}" if not np.isinf(STRATA_BOUNDS[k]) else "-inf"
+        hi = f"{STRATA_BOUNDS[k+1]:.1f}" if not np.isinf(STRATA_BOUNDS[k+1]) else "+inf"
+        print(f"  Stratum {k+1} ({lo}, {hi}): p_k={P_K[k]:.4f}  sigma_k={sigma_k[k]:.4f}")
  
     # Optimal weights: w_k = p_k * sigma_k / sum_j(p_j * sigma_j)
     w_k = P_K * sigma_k
