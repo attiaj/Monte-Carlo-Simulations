@@ -161,5 +161,5 @@ for ax, i in zip(axes, [1, 2]):
 
 plt.tight_layout()
 plt.savefig("empirical_cdf.png", dpi=150, bbox_inches='tight')
-plt.show()
+#plt.show()
 print("\nPlot saved to  empirical_cdf.png")
